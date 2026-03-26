@@ -1,0 +1,136 @@
+Swirl notes:
+
+Swirl
+
+| You can exit swirl and return to the R prompt (>) at any time by pressing the
+| Esc key. If you are already at the prompt, type bye() to exit and save your
+| progress. When you exit properly, you'll see a short message letting you know
+| you've done so.
+
+| When you are at the R prompt (>):
+| -- Typing skip() allows you to skip the current question.
+| -- Typing play() lets you experiment with R on your own; swirl will ignore
+| what you do...
+| -- UNTIL you type nxt() which will regain swirl's attention.
+| -- Typing bye() causes swirl to exit. Your progress will be saved.
+| -- Typing main() returns you to swirl's main menu.
+| -- Typing info() displays these options again.
+
+
+Functions:
+function_name <- function(arg1, arg2 = 2){
+	# Manipulate arguments in some way
+	# Return a value
+ }
+function_name  - nazwa funkcji
+Return a value - value without return keyword
+arg2 - default argument ( **must be after normal parameters, always at the end**)
+remainder(divisor=11, num=5) - when explicitly designating argument values by name, the order is unimportant
+... - if we see such dots this means a function takes as many argument as you want
+
+Wywołanie:
+function_name(value1, value2)
+
+Anonymous functions:
+function(x){x+1} 
+{} - return
+() - parameters
+
+Your own binary operators:
+"%operator_name%" <-function(){}
+
+The invocation:
+> "I"%p%'love'%p%'R!'
+[1] "I love R!"
+
+
+Useful functions:  
+?name - help. 
+?`:` - docs for operators. 
+
+OS functions:  
+getwd - pwd. 
+list.files() - shows files. 
+file.info("mytest.R"). 
+file.exists("mytest.R"). 
+Attention:
+
+ls() - shows vars
+
+Vectors:
+
+We're indexing from 1 !!!  
+Creating vector = c(). 
+Concatenating vectors: paste(LETTERS, 1:4, sep = "-")
+
+z <- rep(NA, 1000). 
+sample(c(y, z),100)
+
+NA - not available
+
+NaN - no a number
+
+x[!is.na(x) & x > 0]
+
+
+data.frame(patients, my_matrix)
+
+sd - standard deviation
+
+Strings:
+
+Can be in ' '  or " "
+
+paste(paste strings here as many as you want) [paste(arg1, arg2) --> "arg1 arg2"]
+
+
+Dataframes:
+
+lenght() - for vector for list
+
+dim() - for matrices or dataframes
+
+attributes(obj) - for example returning the dim of a matrix
+
+str() - general info about obj
+
+identical() - for checking if 2 obj are identical
+
+cbind() - connect matrices via column
+
+
+
+
+data.frame(patients, my_matrix) - tworzy dataframe z kolumnami: patients ( imiona pacjentow) oraz macierz wartosci
+
+Creating column names for my df:
+```R
+cnames <- c("patient", "age", "weight", "bp", "rating", "test")
+colnames(my_data) <- cnames
+
+class(plants)
+[1] "data.frame"
+
+dim(plants)
+[1] 5166   10
+
+nrow(plants)
+[1] 5166
+ncol(plants)
+[1] 10
+
+
+object.size(plants)
+745944 bytes
+
+# get column names:
+names(plants)
+ [1] "Scientific_Name"      "Duration"             "Active_Growth_Period" "Foliage_Color"       
+ [5] "pH_Min"               "pH_Max"               "Precip_Min"           "Precip_Max"          
+ [9] "Shade_Tolerance"      "Temp_Min_F"  
+ 
+ head(df) #shows first 6 rows
+ head(df, 2) #shows specific amount of first rows
+ 
+ summary(plants) # gets us summar like number of NAs
+ ```

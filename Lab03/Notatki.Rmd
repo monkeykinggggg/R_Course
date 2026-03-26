@@ -1,0 +1,235 @@
+### Split-Apply-Combine strategy for data analysis
+Each of the *apply functions will SPLIT up some data into smaller pieces, APPLY a function to each piece, then COMBINE the results.   
+
+In the last lesson, you learned about the two most fundamental members of R's *apply family of functions: lapply() and
+| sapply(). Both take a list as input, apply a function to each element of the list, then combine and return the result.
+| lapply() always returns a list, whereas sapply() attempts to simplify the result.  
+
+#### lapply
+Always returns a list
+```R
+as.list(flags) #return each column of dataframe as list
+ ( so df is simply combined of lists)
+ 
+ cls_list <- lapply(flags, class) # returns a list of results, applying class function to all of the elements = lists of df = columns
+ as.character(cls_list) # zrobilismy liste napisowsapply
+
+ ```
+### sapply
+ 
+  In general, if the result is a list where every element is of length one, then sapply() returns a vector. If the
+| result is a list where every element is a vector of the same length (> 1), sapply() returns a matrix. If sapply()
+| can't figure things out, then it just returns a list, no different from what lapply() would give you.
+```R
+> class(shape_mat)
+[1] "matrix" "array"    #tutaj przypadek jaki wynik zwraca sapply
+```
+range() - return min max values for given vector.
+```R
+unique(c(3, 4, 5, 5, 5, 6, 6)) # returns unique values from the vector
+unique_vals<-lapply(flags, unique)  # returning unique values for each column o df
+sapply(unique_vals, length) # next we check how many this unique value swe've got per col
+lapply(unique_vals, function(elem) elem[2])# wykorzystanie funkcji anonimowej do zwrocenia drugiego elementu kazdego wektora unikalnych wartosci dla kolumny
+```
+#### vapply
+Whereas sapply() tries to 'guess' the correct format of the result, vapply() allows you to specify it explicitly. If
+| the result doesn't match the format you specify, vapply() will throw an error, causing the operation to stop. This can
+| prevent significant problems in your code that might be caused by getting unexpected return values from sapply().
+ ```R
+ vapply(flags, unique, numeric(1))
+Error in vapply(flags, unique, numeric(1)) : values must be length 1,
+ but FUN(X[[1]]) result is length 194
+ 
+ vapply(flags, class, character(1))
+ # the 'character(1)' argument tells R that we expect the class function to return a character vector of length 1 when applied to EACH column of the flags dataset. 
+ ```
+ Safer + better performance.
+ 
+#### tapply
+split your data into groups based on the value of some
+| variable, then apply a function to each group.
+```
+table(flags$animate)  # quick check how to show results nicely
+tapply(flags$population, flags$landmass, summary)
+# get summary of population numbers in each grup for each landmass ( continent)
+tapply(flags$animate,flags$landmass, mean)
+# get mean value for animate prints visibility on flag grouped for each landmass (continent)
+
+```
+
+### Date and Time
+| Dates are represented by the 'Date' class and times are represented by the 'POSIXct' and 'POSIXlt' classes.
+| Internally, dates are stored as the number of days since 1970-01-01 and times are stored as either the number of
+| seconds since 1970-01-01 (for 'POSIXct') or a list of seconds, minutes, hours, etc. (for 'POSIXlt')
+```R
+unclass(d1)
+[1] 20532
+# That's the exact number of days since 1970-01-01!
+
+d2<-as.Date("1969-01-01")
+
+| You are amazing!
+
+  |=========================                                                                                      |  22%
+| Now use unclass() again to see what d2 looks like internally.
+
+> unclass(d2) ## !!! how d2 looks internally
+[1] -365
+
+| You got it right!
+
+  |============================                                                                                   |  25%
+| As you may have anticipated, you get a negative number. In this case, it's -365, since 1969-01-01 is exactly one
+| calendar year (i.e. 365 days) BEFORE 1970-01-01.
+
+t1<-Sys.time()
+
+| All that hard work is paying off!
+
+  |==================================                                                                             |  31%
+| View the contents of t1.
+
+> t1
+[1] "2026-03-20 11:24:42 CET"
+ class(t1)
+[1] "POSIXct" "POSIXt" 
+
+By default, Sys.time() returns an object of class POSIXct, but we can coerce the result to POSIXlt with
+| as.POSIXlt(Sys.time()). Give it a try and store the result in t2.
+
+t2<-as.POSIXlt(Sys.time())
+str(unclass(t2))
+t2$min # we can access specific columns by their names right now thanks to this class
+```
+
+Functions that work on each of above date, time types:
+```R
+weekdays(d1)
+[1] "Friday"
+months(t1)
+[1] "March"
+quarters(t2)
+[1] "Q1"
+```
+strptime() converts character vectors to POSIXlt. In that sense, it is similar to as.POSIXlt(), except that the input
+| doesn't have to be in a particular format (YYYY-MM-DD).
+
+```R
+# standards creation of postixt class obj:
+t2<-as.POSIXlt(Sys.time())
+
+# alternative more free with not specific string needed way:
+t3<-"October 17, 1986 08:24"
+t4<-strptime(t3, "%B %d, %Y %H:%M")
+t4
+[1] "1986-10-17 08:24:00 CET"
+class(t4)
+[1] "POSIXlt" "POSIXt" 
+```
+
+Differences between datetimes:
+```
+Sys.time() - t1
+Time difference of 8.524336 mins
+
+# evalueate changed time in days
+difftime(Sys.time(), t1, units = 'days')
+Time difference of 0.006235952 days
+
+
+```
+ 
+## Text manipulation
+Strings == Characters
+nchar() - how many characters in a string
+collapse(char_vector) - creates one string out of vector of strings
+
+### Regular Expressions - advanced string manipulations
+regular expression = regex
+defines a pattern that could be contained within another string
+
+repl() function, which takes two arguments
+| - a regular expression and a string to be searched. If the string contains the specified regular expression then
+| grepl() will return TRUE, otherwise it will return FALSE.
+```R
+# Groups checking:
+| Type grepl("(iss){2}", "Mississippi") into the R console to see if the substring "iss" exists twice adjacently in the
+| string "Mississippi"
+
+> grepl("(iss){2}", "Mississippi")
+[1] TRUE
+#Notice that the regular expression in the previous example is essentially the same as "ississ"
+```
+
+
+First we'll discuss the built in character sets words ("\\w"), digits ("\\d"), and whitespace characters ("\\s").
+| Words specify any letter, digit, or a underscore, digits specify the digits 0 through 9, and whitespace specifies line
+| breaks, tabs, or spaces. Each of these character sets have their own complements - not words ("\\W"), not digits
+| ("\\D"), and not whitespace characters ("\\S"). Each specifies all of the characters not included in their
+| corresponding character sets.
+
+```R
+# whether there is a digit
+grepl("\\d", "0123456789")
+[1] TRUE
+
+# whether there is a no digit val in the string
+grepl("\\D", "0123456789")
+[1] FALSE
+
+# for checking special characters:
+grepl("\\.", "http://www.jhsph.edu/")
+[1] TRUE
+
+
+grepl("^a", c("bab", "aab"))
+[1] FALSE  TRUE
+
+grepl("b$", c("bab", "aab"))
+[1] TRUE TRUE
+
+# alternation, whether the string matches regex on the leftor on the right
+grepl("a|b", c("abc", "bcd", "cde")) 
+[1]  TRUE  TRUE FALSE
+```
+
+### Talk on different strings functions
+```R
+# Logical grep == grep + l
+grepl("[Ii]", c("Hawaii", "Illinois", "Kentucky"))
+[1]  TRUE  TRUE FALSE
+
+# There’s also the old fashioned grep() which returns the indices of the vector that match the regex argument
+
+> grep("[Ii]", c("Hawaii", "Illinois", "Kentucky")) 
+[1] 1 2
+
+1: 1 3
+2: 1 2 3
+3: 1 2
+4: 2 3
+
+# changes found regex into next argument
+sub("[Ii]", "1", c("Hawaii","Illinois", "Kentucky"))
+[1] "Hawa1i"   "1llinois" "Kentucky"
+
+# here changes every regex match found
+gsub("[Ii]", "1", c("Hawaii","Illinois", "Kentucky"))
+[1] "Hawa11"   "1ll1no1s" "Kentucky"
+
+two_s <- state.name[grep("ss",state.name)]
+two_s
+[1] "Massachusetts" "Mississippi"   "Missouri"      "Tennessee"    
+strsplit(two_s, "ss")
+[[1]]
+[1] "Ma"        "achusetts"
+
+[[2]]
+[1] "Mi"   "i"    "ippi"
+
+[[3]]
+[1] "Mi"   "ouri"
+
+[[4]]
+[1] "Tenne" "ee" 
+```
